@@ -12,9 +12,12 @@ def optimize_model(device, model, loss_function, data_loader, loss_params, num_e
         for batch in data_loader:
             # Move data to device
             inputs = batch.to(device)
+            outputs = model(inputs)
+
+            lambda_par = model.parameters['lambda_']
 
             # Calculate loss
-            loss = loss_function(model, inputs, **loss_params)
+            loss = loss_function(lambda_par, outputs, **loss_params)
 
             # Backward pass and optimization
             optimizer.zero_grad()
