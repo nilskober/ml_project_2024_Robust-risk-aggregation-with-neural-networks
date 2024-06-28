@@ -11,3 +11,4 @@ import torch
 #
 #     def logpdf(self, X):
 #         return sum(d.logpdf(X[:, i]) for i, d in enumerate(self.distributions))
+
