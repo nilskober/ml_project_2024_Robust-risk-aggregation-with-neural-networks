@@ -30,13 +30,15 @@ if __name__ == '__main__':
     distribution__example_4_1 = TwoComonotoneStandardUniforms()
     data_gen = data_generator_from_distribution(128, distribution__example_4_1)
     optimize_model(device, model, loss_function_empirical_integral, data_gen, {'rho': 0.5, 'gamma': 1280, 'f': f, 'input_dim': 2}, 20000, 15000, 0.0001, print_every=100)
+    # Save model to disk
+    torch.save(model.state_dict(), 'model_example_4_1.pth')
     print("Test model")
     model.eval()
     data_gen_test = data_generator_from_distribution(2**16, distribution__example_4_1)
     data_test = next(data_gen_test)
     inputs = data_test.to(device)
     outputs = model(inputs)
-    loss = loss_function_empirical_integral(inputs, outputs, 0.5, 50, f, 2)
+    loss = loss_function_empirical_integral(inputs, outputs, 0.5, 1280, f, 2)
     print(f'Loss on test data: {loss.item():.4f}')
 
 
