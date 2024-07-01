@@ -20,6 +20,10 @@ class TwoComonotoneStandardUniforms(dist.Distribution):
         overall_sample = torch.cat([common_sample, marginal_sample], dim=1)
         return overall_sample
 
+def f_max(x):
+    return torch.max(x[:, 0], x[:, 1])
+
+
 if __name__ == '__main__':
     model = ParallelRiskAggregationNN(2)
     # device = torch.device(

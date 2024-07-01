@@ -1,0 +1,26 @@
+seed: 0
+use_gpu: False
+
+model:
+  _target_: models.ParallelRiskAggregationNN
+  input_dim: 2
+
+distribution:
+  _target_: distributions.TwoComonotoneStandardUniforms
+
+loss_function: loss_functions.loss_function_empirical_integral
+
+# More parameters...
+batch_size_training: 128
+batch_size_testing: 2 ** 16
+rho: 0.5
+gamma: 1280
+f: example_4_1.f_max
+input_dim: 2
+num_epochs_total: 20000
+start_decay_at: 15000
+lr: 0.0001
+print_every: 100
+
+# Path to save model
+model_save_path: './model_example_4_1.pth'
