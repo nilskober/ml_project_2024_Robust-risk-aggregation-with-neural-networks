@@ -3,11 +3,12 @@ import torch
 from omegaconf import DictConfig, OmegaConf
 import numpy as np
 
+import loss_functions
 from data_loader import data_generator_from_distribution
 from optimization_pipeline import optimize_model
 
 
-@hydra.main(config_path="configs", config_name="example_4_1")
+@hydra.main(config_path="configs", config_name="example_4_1", version_base="1.2")
 def main(cfg: DictConfig) -> None:
     # print the config
     print(OmegaConf.to_yaml(cfg))
@@ -32,16 +33,19 @@ def main(cfg: DictConfig) -> None:
     distribution = hydra.utils.instantiate(cfg.distribution)
     data_gen = data_generator_from_distribution(cfg.batch_size_training, distribution)
 
+    f = lambda x: torch.max(x[:, 0], x[:, 1])
+    # loss_function = loss_functions.loss_function_empirical_integral
+    loss_function = hydra.utils.instantiate(cfg.loss_function)
     # optimize the model
     optimize_model(
         device=device,
         model=model,
-        loss_function=cfg.loss_function,
+        loss_function=loss_function,
         data_loader=data_gen,
         loss_params={
             'rho': cfg.rho,
             'gamma': cfg.gamma,
-            'f': hydra.utils.instantiate(cfg.f),
+            'f': f,
             'input_dim': cfg.input_dim
         },
         num_epochs_total=cfg.num_epochs_total,
