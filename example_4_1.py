@@ -22,8 +22,9 @@ class TwoComonotoneStandardUniforms(dist.Distribution):
 
 if __name__ == '__main__':
     model = ParallelRiskAggregationNN(2)
-    device = torch.device(
-        "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu"))
+    # device = torch.device(
+    #     "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu"))
+    device = torch.device("cpu")
     print(device)
     model.to(device)
     # define f as maximum of two values (for tensors)
