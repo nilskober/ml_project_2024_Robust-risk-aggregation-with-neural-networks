@@ -1,3 +1,6 @@
+defaults:
+  - override hydra/launcher: joblib
+
 seed: 0
 use_gpu: False
 
@@ -39,8 +42,28 @@ num_epochs_total: 20000
 start_decay_at: 15000
 lr: 0.0001
 print_every: 100
+test_every: 1000
 
 # Path to save model
 save_model: True
-model_save_path: './model_example_4_1.pth'
+model_save_path: './model.pth'
 overwrite_model: False
+
+# Path to save results
+save_results: True
+train_results_save_path: './results_train.csv'
+test_results_save_path: './results_test.csv'
+overwrite_results: False
+
+#experiment_group: example_4_1${now:%Y-%m-%d-%H-%M-%S}
+experiment_group: example_4_1
+experiment_name: rho=${rho}
+top_level_working_dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}
+hydra:
+  run:
+    dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}/${experiment_name}
+  sweep:
+    dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}
+    subdir: ${experiment_name}
+  job:
+    chdir: true

@@ -1,7 +1,10 @@
+from os.path import join
+
 import hydra
 import torch
 from omegaconf import DictConfig, OmegaConf
 import numpy as np
+import os
 
 import loss_functions
 from data_loader import data_generator_from_distribution
@@ -63,13 +66,14 @@ def main(cfg: DictConfig) -> None:
     # instantiate the distribution from the config
     distribution = hydra.utils.instantiate(cfg.distribution)
     data_gen = data_generator_from_distribution(cfg.batch_size_training, distribution)
+    data_gen_test = data_generator_from_distribution(cfg.batch_size_testing, distribution)
 
     # instantiate the function f from the config
     f = hydra.utils.instantiate(cfg.target_function)
     # loss_function = loss_functions.loss_function_empirical_integral
     loss_function = hydra.utils.instantiate(cfg.loss_function)
     # optimize the model
-    optimize_model(
+    res = optimize_model(
         device=device,
         model=model,
         additional_parameters=additional_parameters,
@@ -84,34 +88,70 @@ def main(cfg: DictConfig) -> None:
         num_epochs_total=cfg.num_epochs_total,
         start_decay_at=cfg.start_decay_at,
         lr=cfg.lr,
-        print_every=cfg.print_every
+        print_every=cfg.print_every,
+        test_every=cfg.test_every,
+        test_data_loader=data_gen_test
     )
 
     # Save model to disk
     if cfg.save_model:
         # check if file exists
-        import os
         if not os.path.exists(cfg.model_save_path) or cfg.overwrite_model:
             try:
                 torch.save(model.state_dict(), cfg.model_save_path)
+                with open(cfg.model_save_path + '_params', 'w') as f:
+                    f.write("name,param\n")
+                    for p in additional_parameters:
+                        f.write(f"{p['name']},{p['param'].item()}\n")
             except FileNotFoundError:
                 print(f"Could not save model to {cfg.model_save_path}")
+            # Save additional parameters to disk
+
         else:
             print(f"Model file {cfg.model_save_path} already exists. Set overwrite_model to True to overwrite.")
 
 
 
+    # Save train results to disk
+    if cfg.save_results:
+        # check if file exists
+        if not os.path.exists(cfg.train_results_save_path) or cfg.overwrite_results:
+            try:
+                with open(cfg.train_results_save_path, 'w') as f:
+                    f.write("epoch,loss\n")
+                    for epoch, loss in res['loss_trajectory_train']:
+                        f.write(f"{epoch},{loss}\n")
+            except FileNotFoundError:
+                print(f"Could not save train results to {cfg.train_results_save_path}")
+        else:
+            print(f"Train results file {cfg.train_results_save_path} already exists. Set overwrite_train_results to True to overwrite.")
+        # check if file exists
+        if not os.path.exists(cfg.test_results_save_path) or cfg.overwrite_results:
+            try:
+                with open(cfg.test_results_save_path, 'w') as f:
+                    f.write("epoch,loss\n")
+                    for epoch, loss in res['loss_trajectory_test']:
+                        f.write(f"{epoch},{loss}\n")
+            except FileNotFoundError:
+                print(f"Could not save test results to {cfg.test_results_save_path}")
+        else:
+            print(
+                f"Test results file {cfg.test_results_save_path} already exists. Set overwrite_test_results to True to overwrite.")
+
     # Test model
-    print("Test model")
-    model.eval()
-    data_gen_test = data_generator_from_distribution(cfg.batch_size_testing, distribution)
-    data_test = next(data_gen_test)
-    inputs = data_test.to(device)
-    outputs = model(inputs)
-    additional_parameters_values = {p['name']: p['param'] for p in additional_parameters}
-    loss = loss_function(inputs, outputs, additional_parameters_values, cfg.rho, cfg.gamma, f, cfg.input_dim)
-    print(f'Loss on test data: {loss.item():.4f}')
+    # print("Test model")
+    # model.eval()
+    # data_gen_test = data_generator_from_distribution(cfg.batch_size_testing, distribution)
+    # data_test = next(data_gen_test)
+    # inputs = data_test.to(device)
+    # outputs = model(inputs)
+    # additional_parameters_values = {p['name']: p['param'] for p in additional_parameters}
+    # loss = loss_function(inputs, outputs, additional_parameters_values, cfg.rho, cfg.gamma, f, cfg.input_dim)
+    # print(f'Loss on test data: {loss.item():.4f}')
 
 
 if __name__ == "__main__":
+    dirname = os.path.dirname(__file__)
+    root_directory_str = str(os.path.normpath(dirname))
+    os.environ["HYDRA_ROOT"] = root_directory_str
     main()
