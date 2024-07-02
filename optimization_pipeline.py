@@ -1,3 +1,4 @@
+import torch
 from torch import optim
 from torch.optim.lr_scheduler import ExponentialLR
 
@@ -14,14 +15,38 @@ class CustomExponentialLR(ExponentialLR):
         else:
             self.last_epoch += 1
 
-def optimize_model(device, model, loss_function, data_loader, loss_params, num_epochs_total, start_decay_at, lr, lr_lambda = 0.1, beta1=0.99, beta2=0.995,
+
+def optimize_model(device, model, additional_parameters, loss_function, data_loader, loss_params, num_epochs_total, start_decay_at, lr, lr_lambda = 0.1, beta1=0.99, beta2=0.995,
                    print_every=5):
+    '''
+    additional_parameters: list of dictionary of additional parameters for the loss function, e.g. lambda. Assume the following strucutre:
+    additional_parameters = [
+        {
+            'name': 'lambda',
+            'param': torch.tensor([1.0], requires_grad=True),
+            'update_every': 50,
+            'start_optimizing_at': 0,
+            'initial_lr': 0.1,
+            'start_decay_at': 0,
+            'decay_every': 50,
+            'decay_rate': 0.98,
+            'start_decay_at': 0
+            'lower_bound': 0.0,
+        },
+        ...
+    ]
+    '''
     # Adam optimizer
     optimizer = optim.Adam(model.parameters(), lr=lr, betas=(beta1, beta2))
-    lambda_optimizer = optim.Adam([model.lambda_par], lr=lr_lambda, betas=(beta1, beta2))
+    optimizers_additional = [
+        optim.SGD([p['param']], lr=p['initial_lr']) for p in additional_parameters
+    ]
     # Learning rate scheduler
     scheduler = CustomExponentialLR(optimizer, gamma=0.98, step_size=50, start_decay_at=start_decay_at)
-    lambda_sheduler = CustomExponentialLR(lambda_optimizer, gamma=0.98, step_size=50, start_decay_at=start_decay_at)
+    scheduler_additional = [
+        CustomExponentialLR(opt, gamma=p['decay_rate'], step_size=p['decay_every'], start_decay_at=p['start_decay_at'])
+        for p, opt in zip(additional_parameters, optimizers_additional)
+    ]
 
     for epoch in range(num_epochs_total):
         model.train()
@@ -30,26 +55,37 @@ def optimize_model(device, model, loss_function, data_loader, loss_params, num_e
         inputs = batch.to(device)
         outputs = model(inputs)
 
+        additional_parameters_values = {p['name']: p['param'] for p in additional_parameters}
         # Calculate loss
-        loss = loss_function(inputs, outputs, **loss_params)
+        loss = loss_function(inputs, outputs, additional_parameters_values, **loss_params)
 
         # Backward pass and optimization
         optimizer.zero_grad()
-        lambda_optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        lambda_optimizer.step()
-        # TODO: optimize lambda separately as in the paper
 
+        # Update additional parameters
+        for p, opt, scheduler_ in zip(additional_parameters, optimizers_additional, scheduler_additional):
+            if epoch == p['start_optimizing_at']:
+                opt.zero_grad()
+            if epoch > p['start_optimizing_at'] and (epoch - p['start_optimizing_at']) % p['update_every'] == 0:
+                # normalize the gradient
+                p['param'].grad /= p['update_every']
+                opt.step()
+                # clamp the parameter if necessary
+                if p['lower_bound'] is not None:
+                    with torch.no_grad():
+                        p['param'].clamp(min=p['lower_bound'])
+                opt.zero_grad()
+            scheduler_.step()
 
-
-        # Update learning rate
-        if epoch % 50 == 0:
-            scheduler.step()
-            lambda_sheduler.step()
+        scheduler.step()
 
         if epoch % print_every == 0:
             print(f'Epoch [{epoch}/{num_epochs_total}], Loss: {loss.item():.4f}')
+            print('Additional parameters:')
+            for p in additional_parameters:
+                print(f'{p["name"]}: {p["param"].item()}')
 
 
 

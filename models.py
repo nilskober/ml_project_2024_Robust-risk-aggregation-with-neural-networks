@@ -27,9 +27,6 @@ class ParallelRiskAggregationNN(nn.Module):
         self.models_h = nn.ModuleList([RiskAggregationNN(1) for _ in range(input_dim)])
         self.model_g = RiskAggregationNN(input_dim)
 
-        # Add custom parameter lambda
-        self.register_parameter('lambda_par', nn.Parameter(torch.tensor(lambda_init)))
-
     def forward(self, x):
         # Compute the output of each model in parallel for the i-th dimension of the input
         # TODO: Make this more efficient using torch operations
@@ -40,11 +37,7 @@ class ParallelRiskAggregationNN(nn.Module):
         outputs_h_concat = torch.cat(outputs_h, dim=1)
         outputs = {
             'h': outputs_h_concat,
-            'g': outputs_g,
-            # Add lambda parameter to the output
-            'lambda': self.lambda_par
+            'g': outputs_g
         }
         return outputs
-
-
 

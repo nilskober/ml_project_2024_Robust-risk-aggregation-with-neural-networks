@@ -16,6 +16,18 @@ target_function:
   _target_: target_functions.f_max
   _partial_: True
 
+lambda_par:
+  initial: 1.0
+  update_every: 200
+  start_optimizing_at: 1000
+  initial_lr: 0.1
+  start_decay_at: 15000
+  decay_every: 50
+  decay_rate: 0.98
+  lower_bound: 0.0 # use null for no lower bound
+
+tau_par: null
+
 # More parameters...
 batch_size_training: 128
 batch_size_testing: 65536

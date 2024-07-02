@@ -20,6 +20,36 @@ def main(cfg: DictConfig) -> None:
 
     # instantiate the model from the config
     model = hydra.utils.instantiate(cfg.model)
+
+    # read additional parameters from config
+    additional_parameters = [
+        {
+            'name': 'lambda',
+            'param': torch.tensor([cfg.lambda_par.initial], requires_grad=True),
+            'update_every': cfg.lambda_par.update_every,
+            'start_optimizing_at': cfg.lambda_par.start_optimizing_at,
+            'initial_lr': cfg.lambda_par.initial_lr,
+            'start_decay_at': cfg.lambda_par.start_decay_at,
+            'decay_every': cfg.lambda_par.decay_every,
+            'decay_rate': cfg.lambda_par.decay_rate,
+            'lower_bound': cfg.lambda_par.lower_bound
+        }
+    ]
+    # check if there is a second parameter tau
+    if cfg.tau_par is not None:
+        additional_parameters.append(
+            {
+                'name': 'tau',
+                'param': torch.tensor([cfg.tau_par.initial], requires_grad=True),
+                'update_every': cfg.tau_par.update_every,
+                'start_optimizing_at': cfg.tau_par.start_optimizing_at,
+                'initial_lr': cfg.tau_par.initial_lr,
+                'start_decay_at': cfg.tau_par.start_decay_at,
+                'decay_every': cfg.tau_par.decay_every,
+                'decay_rate': cfg.tau_par.decay_rate,
+                'lower_bound': cfg.tau_par.lower_bound
+            }
+        )
     # choose the device (cpu or gpu)
     if cfg.use_gpu:
         device = torch.device(
@@ -41,6 +71,7 @@ def main(cfg: DictConfig) -> None:
     optimize_model(
         device=device,
         model=model,
+        additional_parameters=additional_parameters,
         loss_function=loss_function,
         data_loader=data_gen,
         loss_params={
@@ -56,7 +87,18 @@ def main(cfg: DictConfig) -> None:
     )
 
     # Save model to disk
-    torch.save(model.state_dict(), cfg.model_save_path)
+    if cfg.save_model:
+        # check if file exists
+        import os
+        if not os.path.exists(cfg.model_save_path) or cfg.overwrite_model:
+            try:
+                torch.save(model.state_dict(), cfg.model_save_path)
+            except FileNotFoundError:
+                print(f"Could not save model to {cfg.model_save_path}")
+        else:
+            print(f"Model file {cfg.model_save_path} already exists. Set overwrite_model to True to overwrite.")
+
+
 
     # Test model
     print("Test model")
@@ -65,7 +107,8 @@ def main(cfg: DictConfig) -> None:
     data_test = next(data_gen_test)
     inputs = data_test.to(device)
     outputs = model(inputs)
-    loss = loss_function(inputs, outputs, cfg.rho, cfg.gamma, f, cfg.input_dim)
+    additional_parameters_values = {p['name']: p['param'] for p in additional_parameters}
+    loss = loss_function(inputs, outputs, additional_parameters_values, cfg.rho, cfg.gamma, f, cfg.input_dim)
     print(f'Loss on test data: {loss.item():.4f}')
 
 
