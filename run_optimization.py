@@ -1,3 +1,5 @@
+from os.path import join
+
 import hydra
 import torch
 from omegaconf import DictConfig, OmegaConf
@@ -96,10 +98,18 @@ def main(cfg: DictConfig) -> None:
         if not os.path.exists(cfg.model_save_path) or cfg.overwrite_model:
             try:
                 torch.save(model.state_dict(), cfg.model_save_path)
+                with open(cfg.model_save_path + '_params', 'w') as f:
+                    f.write("name,param\n")
+                    for p in additional_parameters:
+                        f.write(f"{p['name']},{p['param'].item()}\n")
             except FileNotFoundError:
                 print(f"Could not save model to {cfg.model_save_path}")
+            # Save additional parameters to disk
+
         else:
             print(f"Model file {cfg.model_save_path} already exists. Set overwrite_model to True to overwrite.")
+
+
 
     # Save train results to disk
     if cfg.save_results:
@@ -140,4 +150,7 @@ def main(cfg: DictConfig) -> None:
 
 
 if __name__ == "__main__":
+    dirname = os.path.dirname(__file__)
+    root_directory_str = str(os.path.normpath(dirname))
+    os.environ["HYDRA_ROOT"] = root_directory_str
     main()
