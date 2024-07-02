@@ -47,7 +47,8 @@ def main(cfg: DictConfig) -> None:
                 'start_decay_at': cfg.tau_par.start_decay_at,
                 'decay_every': cfg.tau_par.decay_every,
                 'decay_rate': cfg.tau_par.decay_rate,
-                'lower_bound': cfg.tau_par.lower_bound
+                'lower_bound': cfg.tau_par.lower_bound,
+                'alpha': cfg.tau_par.alpha
             }
         )
     # choose the device (cpu or gpu)
