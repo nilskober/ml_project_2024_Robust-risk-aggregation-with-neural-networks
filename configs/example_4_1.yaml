@@ -12,6 +12,10 @@ loss_function:
   _target_: loss_functions.loss_function_empirical_integral
   _partial_: True
 
+target_function:
+  _target_: target_functions.f_max
+  _partial_: True
+
 # More parameters...
 batch_size_training: 128
 batch_size_testing: 65536
@@ -25,4 +29,6 @@ lr: 0.0001
 print_every: 100
 
 # Path to save model
+save_model: True
 model_save_path: './model_example_4_1.pth'
+overwrite_model: False

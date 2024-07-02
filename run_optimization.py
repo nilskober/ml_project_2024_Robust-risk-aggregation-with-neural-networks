@@ -8,7 +8,7 @@ from data_loader import data_generator_from_distribution
 from optimization_pipeline import optimize_model
 
 
-@hydra.main(config_path="configs", config_name="example_4_1", version_base="1.2")
+@hydra.main(config_path="configs", version_base="1.2")
 def main(cfg: DictConfig) -> None:
     # print the config
     print(OmegaConf.to_yaml(cfg))
@@ -33,7 +33,8 @@ def main(cfg: DictConfig) -> None:
     distribution = hydra.utils.instantiate(cfg.distribution)
     data_gen = data_generator_from_distribution(cfg.batch_size_training, distribution)
 
-    f = lambda x: torch.max(x[:, 0], x[:, 1])
+    # instantiate the function f from the config
+    f = hydra.utils.instantiate(cfg.target_function)
     # loss_function = loss_functions.loss_function_empirical_integral
     loss_function = hydra.utils.instantiate(cfg.loss_function)
     # optimize the model
@@ -64,7 +65,7 @@ def main(cfg: DictConfig) -> None:
     data_test = next(data_gen_test)
     inputs = data_test.to(device)
     outputs = model(inputs)
-    loss = cfg.loss_function(inputs, outputs, cfg.rho, cfg.gamma, cfg.f, cfg.input_dim)
+    loss = loss_function(inputs, outputs, cfg.rho, cfg.gamma, f, cfg.input_dim)
     print(f'Loss on test data: {loss.item():.4f}')
 
 

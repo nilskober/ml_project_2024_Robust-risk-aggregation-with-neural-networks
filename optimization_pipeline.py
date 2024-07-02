@@ -24,6 +24,7 @@ def optimize_model(device, model, loss_function, data_loader, loss_params, num_e
     lambda_sheduler = CustomExponentialLR(lambda_optimizer, gamma=0.98, step_size=50, start_decay_at=start_decay_at)
 
     for epoch in range(num_epochs_total):
+        model.train()
         batch = next(data_loader)
         # Move data to device
         inputs = batch.to(device)
@@ -49,4 +50,6 @@ def optimize_model(device, model, loss_function, data_loader, loss_params, num_e
 
         if epoch % print_every == 0:
             print(f'Epoch [{epoch}/{num_epochs_total}], Loss: {loss.item():.4f}')
+
+
 
