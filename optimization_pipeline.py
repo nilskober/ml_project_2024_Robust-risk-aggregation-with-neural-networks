@@ -17,7 +17,7 @@ class CustomExponentialLR(ExponentialLR):
 
 
 def optimize_model(device, model, additional_parameters, loss_function, data_loader, loss_params, num_epochs_total, start_decay_at, lr, lr_lambda = 0.1, beta1=0.99, beta2=0.995,
-                   print_every=5):
+                   print_every=5, test_every=50, test_data_loader=None):
     '''
     additional_parameters: list of dictionary of additional parameters for the loss function, e.g. lambda. Assume the following strucutre:
     additional_parameters = [
@@ -48,6 +48,9 @@ def optimize_model(device, model, additional_parameters, loss_function, data_loa
         for p, opt in zip(additional_parameters, optimizers_additional)
     ]
 
+    loss_trajectory_train = []
+    loss_trajectory_test = []
+
     for epoch in range(num_epochs_total):
         model.train()
         batch = next(data_loader)
@@ -58,6 +61,8 @@ def optimize_model(device, model, additional_parameters, loss_function, data_loa
         additional_parameters_values = {p['name']: p['param'] for p in additional_parameters}
         # Calculate loss
         loss = loss_function(inputs, outputs, additional_parameters_values, **loss_params)
+        loss_trajectory_train.append((epoch, loss.item()))
+
 
         # Backward pass and optimization
         optimizer.zero_grad()
@@ -86,6 +91,20 @@ def optimize_model(device, model, additional_parameters, loss_function, data_loa
             print('Additional parameters:')
             for p in additional_parameters:
                 print(f'{p["name"]}: {p["param"].item()}')
+
+        if (epoch % test_every == 0 or epoch == num_epochs_total-1) and test_data_loader is not None:
+            model.eval()
+            batch = next(test_data_loader)
+            inputs = batch.to(device)
+            outputs = model(inputs)
+            loss = loss_function(inputs, outputs, additional_parameters_values, **loss_params)
+            loss_trajectory_test.append((epoch, loss.item()))
+            print(f'Epoch [{epoch}/{num_epochs_total}], Test Loss: {loss.item():.4f}')
+
+    return {
+        'loss_trajectory_train': loss_trajectory_train,
+        'loss_trajectory_test': loss_trajectory_test
+    }
 
 
 

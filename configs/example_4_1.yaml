@@ -39,8 +39,15 @@ num_epochs_total: 20000
 start_decay_at: 15000
 lr: 0.0001
 print_every: 100
+test_every: 1000
 
 # Path to save model
 save_model: True
 model_save_path: './model_example_4_1.pth'
 overwrite_model: False
+
+# Path to save results
+save_results: True
+train_results_save_path: './results_example_4_1_train.csv'
+test_results_save_path: './results_example_4_1_test.csv'
+overwrite_results: False
