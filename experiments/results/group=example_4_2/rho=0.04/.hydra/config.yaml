@@ -32,7 +32,8 @@ tau_par:
 batch_size_training: 128
 batch_size_testing: 65536
 rho: 0.04
-gamma: 5000
+gamma: 1280
+f: example_4_2.f_avar
 input_dim: 2
 num_epochs_total: 20000
 start_decay_at: 15000
