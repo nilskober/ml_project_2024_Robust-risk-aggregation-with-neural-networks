@@ -1,7 +1,9 @@
+import logging
 from os.path import join
 
 import hydra
 import torch
+from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig, OmegaConf
 import numpy as np
 import os
@@ -10,11 +12,16 @@ import loss_functions
 from data_loader import data_generator_from_distribution
 from optimization_pipeline import optimize_model
 
+logger = logging.getLogger("run_optimization")
+logger_hydra = logging.getLogger("hydra_multirun")
 
 @hydra.main(config_path="configs", version_base="1.2")
 def main(cfg: DictConfig) -> None:
+    task_id = HydraConfig.get().job.num
+    logger_hydra.info(f"Starting task {task_id + 1}")
+
     # print the config
-    print(OmegaConf.to_yaml(cfg))
+    logger.info(OmegaConf.to_yaml(cfg))
     # set the seed in torch and numpy
     torch.manual_seed(cfg.seed)
     torch.cuda.manual_seed_all(cfg.seed)
@@ -59,7 +66,7 @@ def main(cfg: DictConfig) -> None:
             "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu"))
     else:
         device = torch.device("cpu")
-    print("device:", device)
+    logger.info(f"device: {device}")
     model.to(device)
 
     # instantiate the distribution from the config
@@ -103,13 +110,11 @@ def main(cfg: DictConfig) -> None:
                     for p in additional_parameters:
                         f.write(f"{p['name']},{p['param'].item()}\n")
             except FileNotFoundError:
-                print(f"Could not save model to {cfg.model_save_path}")
+                logger.info(f"Could not save model to {cfg.model_save_path}")
             # Save additional parameters to disk
 
         else:
-            print(f"Model file {cfg.model_save_path} already exists. Set overwrite_model to True to overwrite.")
-
-
+            logger.info(f"Model file {cfg.model_save_path} already exists. Set overwrite_model to True to overwrite.")
 
     # Save train results to disk
     if cfg.save_results:
@@ -121,9 +126,9 @@ def main(cfg: DictConfig) -> None:
                     for epoch, loss in res['loss_trajectory_train']:
                         f.write(f"{epoch},{loss}\n")
             except FileNotFoundError:
-                print(f"Could not save train results to {cfg.train_results_save_path}")
+                logger.info(f"Could not save train results to {cfg.train_results_save_path}")
         else:
-            print(f"Train results file {cfg.train_results_save_path} already exists. Set overwrite_train_results to True to overwrite.")
+            logger.info(f"Train results file {cfg.train_results_save_path} already exists. Set overwrite_train_results to True to overwrite.")
         # check if file exists
         if not os.path.exists(cfg.test_results_save_path) or cfg.overwrite_results:
             try:
@@ -132,9 +137,9 @@ def main(cfg: DictConfig) -> None:
                     for epoch, loss in res['loss_trajectory_test']:
                         f.write(f"{epoch},{loss}\n")
             except FileNotFoundError:
-                print(f"Could not save test results to {cfg.test_results_save_path}")
+                logger.info(f"Could not save test results to {cfg.test_results_save_path}")
         else:
-            print(
+            logger.info(
                 f"Test results file {cfg.test_results_save_path} already exists. Set overwrite_test_results to True to overwrite.")
 
     # Test model
@@ -148,6 +153,7 @@ def main(cfg: DictConfig) -> None:
     # loss = loss_function(inputs, outputs, additional_parameters_values, cfg.rho, cfg.gamma, f, cfg.input_dim)
     # print(f'Loss on test data: {loss.item():.4f}')
 
+    logger_hydra.info(f"Completed task {task_id + 1}")
 
 if __name__ == "__main__":
     dirname = os.path.dirname(__file__)

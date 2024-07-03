@@ -8,6 +8,11 @@ class TwoComonotoneStandardUniforms(dist.Distribution):
         self.X_1 = dist.Uniform(0, 1)
         self.X_2 = dist.Uniform(0, 1)
 
+    # override arg_constraints
+    @property
+    def arg_constraints(self):
+        return {}
+
     def sample(self, sample_shape):
         common_sample = self.X_1.sample(sample_shape)
         common_sample = torch.stack([common_sample, common_sample], dim=1)
@@ -23,7 +28,9 @@ class TwoIndependentStandardUniforms(dist.Distribution):
         self.X_1 = dist.Uniform(0, 1)
         self.X_2 = dist.Uniform(0, 1)
 
-
+    @property
+    def arg_constraints(self):
+        return {}
     def sample(self, sample_shape):
         common_sample = torch.stack([self.X_1.sample(sample_shape), self.X_2.sample(sample_shape)], dim=1)
         marginal_sample = torch.stack([self.X_1.sample(sample_shape), self.X_2.sample(sample_shape)], dim=1)

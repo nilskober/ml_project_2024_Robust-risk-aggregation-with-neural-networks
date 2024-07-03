@@ -1,0 +1,25 @@
+version: 1
+disable_existing_loggers: False
+
+formatters:
+  standard:
+    format: "%(asctime)s %(name)s [%(levelname)s]: %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+
+handlers:
+  full_file:
+    filename: full.log
+    class: logging.FileHandler
+    formatter: standard
+  console:
+    class: logging.StreamHandler
+    formatter: standard
+
+root:
+ level: INFO
+ handlers: [full_file]
+
+loggers:
+  hydra_multirun:
+    level: INFO
+    handlers: [console]

@@ -1,3 +1,8 @@
+defaults:
+  - override hydra/launcher: joblib
+  - override hydra/job_logging: only_file
+  - _self_
+
 seed: 0
 use_gpu: False
 

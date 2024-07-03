@@ -1,5 +1,8 @@
 defaults:
   - override hydra/launcher: joblib
+  - override hydra/job_logging: only_file
+  - _self_
+
 
 seed: 0
 use_gpu: False
@@ -22,7 +25,7 @@ target_function:
   _partial_: True
 
 lambda_par:
-  initial: 1.0
+  initial: 0.0
   update_every: 200
   start_optimizing_at: 1000
   initial_lr: 0.1
@@ -40,11 +43,11 @@ rho: 0.5
 gamma: 1280
 f: example_4_1.f_max
 input_dim: 2
-num_epochs_total: 20000
+num_epochs_total: 100001
 start_decay_at: 15000
 lr: 0.0001
 print_every: 100
-test_every: 1000
+test_every: 100
 
 # Path to save model
 save_model: False

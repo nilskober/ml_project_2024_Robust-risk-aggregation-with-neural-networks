@@ -1,8 +1,10 @@
+import logging
+
 import torch
 from torch import optim
 from torch.optim.lr_scheduler import ExponentialLR
 
-
+logger = logging.getLogger("optimization")
 class CustomExponentialLR(ExponentialLR):
     def __init__(self, optimizer, gamma, step_size=50, start_decay_at=0, last_epoch=-1):
         self.step_size = step_size
@@ -87,10 +89,10 @@ def optimize_model(device, model, additional_parameters, loss_function, data_loa
         scheduler.step()
 
         if epoch % print_every == 0:
-            print(f'Epoch [{epoch}/{num_epochs_total}], Loss: {loss.item():.4f}')
-            print('Additional parameters:')
+            logger.info(f'Epoch [{epoch}/{num_epochs_total}], Loss: {loss.item():.4f}')
+            logger.info('Additional parameters:')
             for p in additional_parameters:
-                print(f'{p["name"]}: {p["param"].item()}')
+                logger.info(f'{p["name"]}: {p["param"].item()}')
 
         if (epoch % test_every == 0 or epoch == num_epochs_total-1) and test_data_loader is not None:
             model.eval()
@@ -99,7 +101,7 @@ def optimize_model(device, model, additional_parameters, loss_function, data_loa
             outputs = model(inputs)
             loss = loss_function(inputs, outputs, additional_parameters_values, **loss_params)
             loss_trajectory_test.append((epoch, loss.item()))
-            print(f'Epoch [{epoch}/{num_epochs_total}], Test Loss: {loss.item():.4f}')
+            logger.info(f'Epoch [{epoch}/{num_epochs_total}], Test Loss: {loss.item():.4f}')
 
     return {
         'loss_trajectory_train': loss_trajectory_train,
