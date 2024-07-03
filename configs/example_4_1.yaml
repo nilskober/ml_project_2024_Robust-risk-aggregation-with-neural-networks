@@ -6,6 +6,8 @@ use_gpu: False
 
 model:
   _target_: models.ParallelRiskAggregationNN
+  hidden_dim: 128
+  num_hidden_layers: 3
   input_dim: 2
 
 distribution:
@@ -45,7 +47,7 @@ print_every: 100
 test_every: 1000
 
 # Path to save model
-save_model: True
+save_model: False
 model_save_path: './model.pth'
 overwrite_model: False
 
@@ -55,9 +57,9 @@ train_results_save_path: './results_train.csv'
 test_results_save_path: './results_test.csv'
 overwrite_results: False
 
-#experiment_group: example_4_1${now:%Y-%m-%d-%H-%M-%S}
-experiment_group: example_4_1
-experiment_name: rho=${rho}
+experiment_group: example_4_1_${now:%Y-%m-%d-%H-%M-%S}
+#experiment_group: example_4_1
+experiment_name: rho=${rho}/gamma=${gamma}/width=${model.hidden_dim}/depth=${model.num_hidden_layers}/seed=${seed}
 top_level_working_dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}
 hydra:
   run:

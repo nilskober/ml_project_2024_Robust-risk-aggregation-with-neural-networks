@@ -2,30 +2,29 @@ import torch
 import torch.nn as nn
 
 class RiskAggregationNN(nn.Module):
-    def __init__(self, input_dim, output_dim=1):
+    def __init__(self, input_dim, hidden_dim, num_hidden_layers, output_dim=1):
         super(RiskAggregationNN, self).__init__()
-        hidden_dim = 64 * input_dim
-        self.model = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Linear(hidden_dim, output_dim)
-        )
+        hidden_dim = hidden_dim
+
+        self.model = nn.Sequential()
+        self.model.add_module('input', nn.Linear(input_dim, hidden_dim))
+        self.model.add_module('relu0', nn.ReLU())
+
+        for i in range(num_hidden_layers):
+            self.model.add_module(f'hidden{i + 1}', nn.Linear(hidden_dim, hidden_dim))
+            self.model.add_module(f'relu{i + 1}', nn.ReLU())
+
+        self.model.add_module('output', nn.Linear(hidden_dim, output_dim))
 
     def forward(self, x):
         return self.model(x)
 
 class ParallelRiskAggregationNN(nn.Module):
-    def __init__(self, input_dim, lambda_init=1.0):
+    def __init__(self, input_dim, hidden_dim, num_hidden_layers):
         super(ParallelRiskAggregationNN, self).__init__()
         self.input_dim = input_dim
-        self.models_h = nn.ModuleList([RiskAggregationNN(1) for _ in range(input_dim)])
-        self.model_g = RiskAggregationNN(input_dim)
+        self.models_h = nn.ModuleList([RiskAggregationNN(1, hidden_dim, num_hidden_layers, ) for _ in range(input_dim)])
+        self.model_g = RiskAggregationNN(input_dim, hidden_dim, num_hidden_layers)
 
     def forward(self, x):
         # Compute the output of each model in parallel for the i-th dimension of the input

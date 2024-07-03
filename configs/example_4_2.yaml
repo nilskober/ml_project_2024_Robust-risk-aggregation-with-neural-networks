@@ -3,6 +3,8 @@ use_gpu: False
 
 model:
   _target_: models.ParallelRiskAggregationNN
+  hidden_dim: 128
+  num_hidden_layers: 3
   input_dim: 2
 
 distribution:
@@ -14,6 +16,7 @@ loss_function:
 
 target_function:
   _target_: target_functions.f_avar
+  alpha: 0.7
   _partial_: True
 
 lambda_par:
@@ -35,7 +38,6 @@ tau_par:
   decay_every: 50
   decay_rate: 0.98
   lower_bound: null
-  #alpha: 0.7
 
 # More parameters...
 batch_size_training: 256
@@ -63,7 +65,7 @@ overwrite_results: False
 
 #experiment_group: example_4_1${now:%Y-%m-%d-%H-%M-%S}
 experiment_group: example_4_2
-experiment_name: rho=${rho}
+experiment_name: alpha=${alpha}/rho=${rho}/gamma=${gamma}/width=${model.hidden_dim}/depth=${model.num_hidden_layers}/seed=${seed}
 top_level_working_dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}
 hydra:
   run:
