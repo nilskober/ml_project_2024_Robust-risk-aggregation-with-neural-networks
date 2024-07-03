@@ -80,7 +80,7 @@ def optimize_model(device, model, additional_parameters, loss_function, data_loa
                 # clamp the parameter if necessary
                 if p['lower_bound'] is not None:
                     with torch.no_grad():
-                        p['param'].clamp(min=p['lower_bound'])
+                        p['param'].clamp_(min=p['lower_bound'])
                 opt.zero_grad()
             scheduler_.step()
 
