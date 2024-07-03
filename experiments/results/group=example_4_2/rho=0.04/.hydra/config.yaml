@@ -1,21 +1,16 @@
 seed: 0
-use_gpu: False
-
+use_gpu: false
 model:
   _target_: models.ParallelRiskAggregationNN
   input_dim: 2
-
 distribution:
   _target_: distributions.TwoIndependentStandardUniforms
-
 loss_function:
   _target_: loss_functions.loss_function_empirical_integral_avar
-  _partial_: True
-
+  _partial_: true
 target_function:
   _target_: target_functions.f_avar
-  _partial_: True
-
+  _partial_: true
 lambda_par:
   initial: 1.0
   update_every: 200
@@ -24,8 +19,7 @@ lambda_par:
   start_decay_at: 15000
   decay_every: 50
   decay_rate: 0.98
-  lower_bound: 0.0 # use null for no lower bound
-
+  lower_bound: 0.0
 tau_par:
   initial: 2.0
   update_every: 1000
@@ -35,41 +29,23 @@ tau_par:
   decay_every: 50
   decay_rate: 0.98
   lower_bound: null
-  #alpha: 0.7
-
-# More parameters...
 batch_size_training: 128
 batch_size_testing: 65536
 rho: 0.04
 gamma: 5000
-#f: example_4_2.f_avar
 input_dim: 2
 num_epochs_total: 20000
 start_decay_at: 15000
 lr: 0.0001
 print_every: 100
 test_every: 1000
-
-# Path to save model
-save_model: False
-model_save_path: './model.pth'
-overwrite_model: False
-
-# Path to save results
-save_results: False
-train_results_save_path: './results_train.csv'
-test_results_save_path: './results_test.csv'
-overwrite_results: False
-
-#experiment_group: example_4_1${now:%Y-%m-%d-%H-%M-%S}
+save_model: false
+model_save_path: ./model.pth
+overwrite_model: false
+save_results: false
+train_results_save_path: ./results_train.csv
+test_results_save_path: ./results_test.csv
+overwrite_results: false
 experiment_group: example_4_2
 experiment_name: rho=${rho}
 top_level_working_dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}
-hydra:
-  run:
-    dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}/${experiment_name}
-  sweep:
-    dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}
-    subdir: ${experiment_name}
-  job:
-    chdir: true

@@ -16,7 +16,6 @@ class TwoComonotoneStandardUniforms(dist.Distribution):
         return overall_sample
 
 
-
 class TwoIndependentStandardUniforms(dist.Distribution):
 
     def __init__(self):
