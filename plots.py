@@ -122,17 +122,27 @@ def plot_type2(data, fixed_params, num_seeds=None, log_scale=False, epoch_start=
 
 
 # Example usage:
-root_dir = 'experiments/results/group=example_4_1_2024-07-03-17-03-46'  # Change this to the directory where your data is stored
-data = collect_data(root_dir)
+root_dir = 'experiments/results/group=example_4_1_rho_2024-07-03-19-02-49'  # Change this to the directory where your data is stored
+# data = collect_data(root_dir)
 
 # Plot Type 1 Example
-x_param = 'rho'  # Change this to the parameter you want to plot on the x-axis
-fixed_params = {'gamma': 1280, 'width': 128, 'depth': 3}
-epoch = 19999  # Specify the epoch to fix
-num_seeds = 4  # Specify the number of seeds to use
+# x_param = 'rho'  # Change this to the parameter you want to plot on the x-axis
+# fixed_params = {'gamma': 1280, 'width': 128, 'depth': 3}
+# epoch = 100000  # Specify the epoch to fix
+# num_seeds = 11  # Specify the number of seeds to use
+# plot_type1(data, x_param, fixed_params, epoch, num_seeds)
+#
+
+root_dir = 'experiments/results/group=example_4_1_gamma_2024-07-04-12-39-44'
+data = collect_data(root_dir)
+x_param = 'gamma'  # Change this to the parameter you want to plot on the x-axis
+fixed_params = {'rho': 0.5, 'width': 128, 'depth': 3}
+epoch = 100000  # Specify the epoch to fix
+num_seeds = 11  # Specify the number of seeds to use
 plot_type1(data, x_param, fixed_params, epoch, num_seeds)
 
-# Plot Type 2 Example
-fixed_params = {'rho': 0.3, 'gamma': 1280, 'width': 128, 'depth': 3}
-num_seeds = 4  # Specify the number of seeds to use
-plot_type2(data, fixed_params, num_seeds, log_scale=False, epoch_start=15000)
+
+# # # Plot Type 2 Example
+# fixed_params = {'rho': 0.3, 'gamma': 1280, 'width': 128, 'depth': 3}
+# num_seeds = 4  # Specify the number of seeds to use
+# plot_type2(data, fixed_params, num_seeds, log_scale=False, epoch_start=15000)
