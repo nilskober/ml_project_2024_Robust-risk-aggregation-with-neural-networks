@@ -14,7 +14,10 @@ model:
   input_dim: 2
 
 distribution:
-  _target_: torch.distributions.MultivariateNormal
+  _target_: distributions.MultivariateDependentNormal
+  loc: "[0.0,0.0]"
+  covariance_matrix: "[[2.0, 1.0],
+                      [1.0, 3.0]]"
 
 
 loss_function:
@@ -53,7 +56,7 @@ rho: 0.1
 gamma: 1280
 f: example_4_2.f_avar
 input_dim: 2
-num_epochs_total: 5000
+num_epochs_total: 20000
 start_decay_at: 15000
 lr: 0.0001
 print_every: 100
