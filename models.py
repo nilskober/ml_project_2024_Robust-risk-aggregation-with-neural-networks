@@ -39,4 +39,3 @@ class ParallelRiskAggregationNN(nn.Module):
             'g': outputs_g
         }
         return outputs
-

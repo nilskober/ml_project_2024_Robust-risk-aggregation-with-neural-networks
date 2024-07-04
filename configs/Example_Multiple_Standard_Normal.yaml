@@ -14,7 +14,8 @@ model:
   input_dim: 2
 
 distribution:
-  _target_: distributions.TwoIndependentStandardUniforms
+  _target_: torch.distributions.MultivariateNormal
+
 
 loss_function:
   _target_: loss_functions.loss_function_empirical_integral_avar
