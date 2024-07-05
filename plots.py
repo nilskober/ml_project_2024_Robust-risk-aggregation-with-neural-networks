@@ -93,7 +93,7 @@ def plot_fixed_epoch(root_dir, x_param, fixed_params, epoch, num_seeds=None, x_p
         plt.show()
 
 
-def plot_epoch(root_dir, fixed_params, num_seeds=None, log_scale=False, epoch_start=None, epoch_end=None, output_path=None):
+def plot_epoch(root_dir, fixed_params, num_seeds=None, log_scale=False, epoch_start=None, epoch_end=None, output_path=None, title=None):
     data = collect_data(root_dir)
     filtered_data = filter_by_seeds(data, fixed_params, num_seeds)
     if filtered_data.empty:
@@ -117,9 +117,10 @@ def plot_epoch(root_dir, fixed_params, num_seeds=None, log_scale=False, epoch_st
 
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
-    title = f'Loss vs Epoch with fixed parameters {fixed_params} and {num_seeds} seeds'
-    if epoch_start is not None or epoch_end is not None:
-        title += f' (epoch range: {epoch_start}-{epoch_end})'
+    if title is None:
+        title = f'Loss vs Epoch with fixed parameters {fixed_params} and {num_seeds} seeds'
+        if epoch_start is not None or epoch_end is not None:
+            title += f' (epoch range: {epoch_start}-{epoch_end})'
     plt.title(title)
     if log_scale:
         plt.yscale('log')
@@ -134,103 +135,3 @@ def plot_epoch(root_dir, fixed_params, num_seeds=None, log_scale=False, epoch_st
         plt.savefig(output_path)
     else:
         plt.show()
-
-
-
-# Example usage:
-# root_dir = 'experiments/results/group=example_4_1_rho_2024-07-03-19-02-49'  # Change this to the directory where your data is stored
-# data = collect_data(root_dir)
-#
-# # Plot Type 1 Example
-# x_param = 'rho'  # Change this to the parameter you want to plot on the x-axis
-# fixed_params = {'gamma': 1280, 'width': 128, 'depth': 3}
-# epoch = 20000  # Specify the epoch to fix
-# num_seeds = 11  # Specify the number of seeds to use
-# plot_fixed_epoch(data, x_param, fixed_params, epoch, num_seeds)
-
-
-
-
-
-# root_dir = 'experiments/results/group=example_4_2_2024-07-05-02-42-00/alpha=0.7'  # Change this to the directory where your data is stored
-# data = collect_data(root_dir)
-#
-# # Plot Type 1 Example
-# x_param = 'rho'  # Change this to the parameter you want to plot on the x-axis
-# fixed_params = {'gamma': 1280, 'width': 128, 'depth': 3}
-# epoch = 19999  # Specify the epoch to fix
-# num_seeds = 11  # Specify the number of seeds to use
-# plot_fixed_epoch(data, x_param, fixed_params, epoch, num_seeds)
-#
-# root_dir = 'experiments/results/group=example_3_2024-07-05-02-52-32/alpha=0.7'  # Change this to the directory where your data is stored
-# data = collect_data(root_dir)
-#
-# # Plot Type 1 Example
-# x_param = 'rho'  # Change this to the parameter you want to plot on the x-axis
-# fixed_params = {'gamma': 1280, 'width': 128, 'depth': 3}
-# epoch = 4999  # Specify the epoch to fix
-# num_seeds = 11  # Specify the number of seeds to use
-# plot_fixed_epoch(data, x_param, fixed_params, epoch, num_seeds)
-
-
-
-# root_dir = 'experiments/results/group=example_4_1_gamma_2024-07-04-12-39-44'
-# data = collect_data(root_dir)
-# x_param = 'gamma'  # Change this to the parameter you want to plot on the x-axis
-# fixed_params = {'rho': 0.5, 'width': 128, 'depth': 3}
-# epoch = 100000  # Specify the epoch to fix
-# num_seeds = 11  # Specify the number of seeds to use
-# plot_fixed_epoch(data, x_param, fixed_params, epoch, num_seeds)
-
-
-# root_dir = 'experiments/results/group=example_4_1_rho_2024-07-03-19-02-49'  # Change this to the directory where your data is stored
-# data = collect_data(root_dir)
-# # # Plot Type 2 Example
-# fixed_params = {'rho': 0.3, 'gamma': 1280, 'width': 128, 'depth': 3}
-# num_seeds = 11  # Specify the number of seeds to use
-# plot_epoch(data, fixed_params, num_seeds, log_scale=False, epoch_start=15000, epoch_end=40000)
-
-
-
-# Example usage:
-# root_dir = 'experiments/results/group=example_4_1_gamma_2024-07-04-12-39-44'  # Change this to the directory where your data is stored
-# data = collect_data(root_dir)
-#
-# # Plot Type 1 Example
-# x_param = 'gamma'  # Change this to the parameter you want to plot on the x-axis
-# fixed_params = {'rho': 0.5, 'width': 128, 'depth': 3}
-# epoch = 100000  # Specify the epoch to fix
-# num_seeds = 11  # Specify the number of seeds to use
-# plot_fixed_epoch(data, x_param, fixed_params, epoch, num_seeds, x_param_start=1000)
-#
-# root_dir = 'experiments/results/group=example_4_1_size_2024-07-04-00-16-16'  # Change this to the directory where your data is stored
-# data = collect_data(root_dir)
-#
-# # Plot Type 1 Example
-# x_param = 'depth'  # Change this to the parameter you want to plot on the x-axis
-# fixed_params = {'rho': 0.5, 'gamma': 1280, 'width': 128}
-# epoch = 100000  # Specify the epoch to fix
-# num_seeds = 11  # Specify the number of seeds to use
-# plot_fixed_epoch(data, x_param, fixed_params, epoch, num_seeds)
-#
-# root_dir = 'experiments/results/group=example_4_1_size_2024-07-04-00-16-16'  # Change this to the directory where your data is stored
-# data = collect_data(root_dir)
-#
-# # Plot Type 1 Example
-# x_param = 'width'  # Change this to the parameter you want to plot on the x-axis
-# fixed_params = {'rho': 0.5, 'gamma': 1280, 'depth': 3}
-# epoch = 100000  # Specify the epoch to fix
-# num_seeds = 11  # Specify the number of seeds to use
-# plot_fixed_epoch(data, x_param, fixed_params, epoch, num_seeds)
-#
-#
-#
-# root_dir = 'experiments/results/group=example_4_1_2024-07-05-10-34-17'  # Change this to the directory where your data is stored
-# data = collect_data(root_dir)
-#
-# # Plot Type 1 Example
-# x_param = 'batchsize'  # Change this to the parameter you want to plot on the x-axis
-# fixed_params = {'rho': 0.5, 'gamma': 1280, 'depth': 3, 'width': 128}
-# epoch = 20000  # Specify the epoch to fix
-# num_seeds = 11  # Specify the number of seeds to use
-# plot_fixed_epoch(data, x_param, fixed_params, epoch, num_seeds)
