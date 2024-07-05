@@ -33,7 +33,7 @@ target_function:
   _partial_: True
 
 lambda_par:
-  initial: 1.0
+  initial: 0.0
   update_every: 200
   start_optimizing_at: 1000
   initial_lr: 0.1
@@ -43,7 +43,7 @@ lambda_par:
   lower_bound: 0.0 # use null for no lower bound
 
 tau_par:
-  initial: 1.2
+  initial: 0.0
   update_every: 1000
   start_optimizing_at: 5000
   initial_lr: 0.1
@@ -63,7 +63,7 @@ num_epochs_total: 20000
 start_decay_at: 15000
 lr: 0.0001
 print_every: 100
-test_every: 1000
+test_every: 100
 
 # Path to save model
 save_model: False
@@ -76,7 +76,7 @@ train_results_save_path: './results_train.csv'
 test_results_save_path: './results_test.csv'
 overwrite_results: False
 
-experiment_group: example_4_2_${now:%Y-%m-%d-%H-%M-%S}
+experiment_group: example_3${now:%Y-%m-%d-%H-%M-%S}
 #experiment_group: example_4_2
 experiment_name: alpha=${target_function.alpha}/rho=${rho}/gamma=${gamma}/width=${model.hidden_dim}/depth=${model.num_hidden_layers}/seed=${seed}
 top_level_working_dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}
