@@ -14,12 +14,12 @@ model:
   input_dim: 3
 
 distribution:
-  _target_: distributions.MultivariateDependentNormal
+  _target_: distributions.MultivariateDependentNormalThetaHalf
   loc: "[0.0,0.0,0.0]" #adjust the above input_dim and input_dim in "more parameters" to match this dimensions
   covariance_matrix: "[
-                      [6.0, 2.0, 1.0],
-                      [2.0, 3.0, 1.0],
-                      [1.0, 1.0, 1.0]
+                      [1.0, 1.0, 0.25],
+                      [1.0, 4.0, 1.0],
+                      [0.25, 1.0, 1.0]
                   ]"
 
 

@@ -41,6 +41,7 @@ class TwoIndependentStandardUniforms(dist.Distribution):
 
 class MultivariateDependentNormal(dist.Distribution):
     arg_constraints = {}
+
     def __init__(self, loc, covariance_matrix):
         super(MultivariateDependentNormal, self).__init__()
         self.loc = torch.tensor(ast.literal_eval(loc))
@@ -51,15 +52,34 @@ class MultivariateDependentNormal(dist.Distribution):
     def sample(self, sample_shape):
         # Sample from the multivariate distribution
         common_sample = self.X.sample(sample_shape)
-        #common_sample.unsqueeze_(0)
-        #print(common_sample.shape)
         # Sample from each marginal distribution
         marginal_samples = self.X.sample(sample_shape)[:, 0].unsqueeze(1)
         for i in np.arange(1, self.dim):
-            #print(i, marginal_samples.shape)
             new_marginal_sample = self.X.sample(sample_shape)[:, i].unsqueeze_(1)
             marginal_samples = torch.cat([marginal_samples, new_marginal_sample], dim=1)
-            #print(i, marginal_samples)
+
+        overall_sample = torch.cat([common_sample, marginal_samples], dim=1)
+        return overall_sample
+
+
+class MultivariateDependentNormalThetaHalf(dist.Distribution):
+    arg_constraints = {}
+
+    def __init__(self, loc, covariance_matrix):
+        super(MultivariateDependentNormalThetaHalf, self).__init__()
+        self.loc = torch.tensor(ast.literal_eval(loc))
+        self.covariance_matrix = torch.tensor(ast.literal_eval(covariance_matrix))
+        self.dim = len(self.loc)
+        self.X = dist.MultivariateNormal(self.loc, self.covariance_matrix)
+
+    def sample(self, sample_shape):
+        # Sample from the multivariate distribution
+        common_sample = self.X.sample(sample_shape)
+        # Sample from each marginal distribution
+        marginal_samples = 1/2*self.X.sample(sample_shape)[:, 0].unsqueeze(1)+1/2*common_sample[:, 0].unsqueeze(1)
+        for i in np.arange(1, self.dim):
+            new_marginal_sample = 1/2*self.X.sample(sample_shape)[:, i].unsqueeze_(1)+1/2*common_sample[:, i].unsqueeze(1)
+            marginal_samples = torch.cat([marginal_samples, new_marginal_sample], dim=1)
 
         overall_sample = torch.cat([common_sample, marginal_samples], dim=1)
         return overall_sample
