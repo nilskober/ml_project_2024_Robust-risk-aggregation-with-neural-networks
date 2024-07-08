@@ -44,7 +44,7 @@ def filter_by_seeds(data, fixed_params, num_seeds=None):
     return filtered_data
 
 
-def plot_fixed_epoch(root_dir, x_param, fixed_params, epoch, num_seeds=None, x_param_start=None, x_param_end=None, title=None, output_path=None):
+def plot_fixed_epoch(root_dir, x_param, fixed_params, epoch, num_seeds=None, x_param_start=None, x_param_end=None, title=None, output_path=None, upper_bound_func=None, lower_bound_func=None):
     data = collect_data(root_dir)
     filtered_data = filter_by_seeds(data, fixed_params, num_seeds)
     if filtered_data.empty:
@@ -68,6 +68,12 @@ def plot_fixed_epoch(root_dir, x_param, fixed_params, epoch, num_seeds=None, x_p
     plt.plot(grouped[x_param], grouped['mean_loss'], marker='o', label='Mean Loss')
     plt.fill_between(grouped[x_param], grouped['mean_loss'] - grouped['stderr_loss'],
                      grouped['mean_loss'] + grouped['stderr_loss'], alpha=0.3, label='Standard Error')
+
+    if upper_bound_func and lower_bound_func:
+        upper_bound = grouped[x_param].apply(lambda x: upper_bound_func(x, fixed_params))
+        lower_bound = grouped[x_param].apply(lambda x: lower_bound_func(x, fixed_params))
+        plt.plot(grouped[x_param], upper_bound, 'r--', label='Upper Bound')
+        plt.plot(grouped[x_param], lower_bound, 'r--', label='Lower Bound')
 
     plt.xlabel(x_param)
     plt.ylabel('Loss')

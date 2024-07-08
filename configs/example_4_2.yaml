@@ -50,9 +50,8 @@ batch_size_training: 128
 batch_size_testing: 65536
 rho: 0.1
 gamma: 1280
-f: target_functions.f_avar
 input_dim: 2
-num_epochs_total: 20000
+num_epochs_total: 20001
 start_decay_at: 15000
 lr: 0.0001
 print_every: 100
@@ -69,7 +68,7 @@ train_results_save_path: './results_train.csv'
 test_results_save_path: './results_test.csv'
 overwrite_results: False
 
-experiment_group: example_4_2_${now:%Y-%m-%d-%H-%M-%S}
+experiment_group: example_4_2_1norm${now:%Y-%m-%d-%H-%M-%S}
 #experiment_group: example_4_2
 experiment_name: alpha=${target_function.alpha}/rho=${rho}/gamma=${gamma}/width=${model.hidden_dim}/depth=${model.num_hidden_layers}/seed=${seed}
 top_level_working_dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}

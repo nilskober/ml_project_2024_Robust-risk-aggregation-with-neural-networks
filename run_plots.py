@@ -1,3 +1,6 @@
+from functools import partial
+from math import sqrt
+
 from plots import plot_fixed_epoch, plot_epoch
 import os
 
@@ -7,6 +10,18 @@ base_output_dir = 'experiments/plots/'
 # create the output directory if it does not exist
 
 os.makedirs(base_output_dir, exist_ok=True)
+
+# Example 4.1 analytical solution
+def f_ref_4_1(rho, fixed_params):
+    return (1.0 + min(0.5, rho))/2.0
+
+# Example 4.2 analytical solution
+def f_ref_4_2_upper(rho, fixed_params, alpha):
+    return min(1+alpha, 2-2.0/3.0 * sqrt(2 - 2*alpha) + rho/(2-2*alpha))
+
+def f_ref_4_2_lower(rho, fixed_params, alpha):
+    return min(1+alpha, 2-2.0/3.0 * sqrt(2 - 2*alpha) + (2*(-3+2*sqrt(2 - 2*alpha) + 3*alpha)*rho)/(3*(2-alpha)*(1-alpha)*alpha))
+
 
 # Arguments for the run_plots.py script
 args_fixed_epoch = [
@@ -18,6 +33,8 @@ args_fixed_epoch = [
         'num_seeds': 11,
         'output_path': base_output_dir + 'example_4_1_rho.png',
         'title': 'Example 4.1 - Varying rho',
+        'upper_bound_func': f_ref_4_1,
+        'lower_bound_func': f_ref_4_1
     },
     {
         'root_dir': base_dir + 'group=example_4_1_gamma',
@@ -87,6 +104,8 @@ args_fixed_epoch = [
         'num_seeds': 11,
         'output_path': base_output_dir + 'example_4_2_rho.png',
         'title': 'Example 4.2 - Varying rho',
+        'upper_bound_func': partial(f_ref_4_2_upper, alpha=0.7),
+        'lower_bound_func': partial(f_ref_4_2_lower, alpha=0.7),
     },
     # Example 3
     {
@@ -97,6 +116,28 @@ args_fixed_epoch = [
         'num_seeds': 11,
         'output_path': base_output_dir + 'example_3_rho.png',
         'title': 'Example 3 - Varying rho',
+    },
+    {
+        'root_dir': base_dir + 'group=example_4_1_rho_1norm',
+        'x_param': 'rho',
+        'fixed_params': {'gamma': 1280, 'depth': 3, 'width': 128, 'batch_size': 128},
+        'epoch': 20000,
+        'num_seeds': 1,
+        'output_path': base_output_dir + 'example_4_1_rho_1norm.png',
+        'title': 'Example 4.1 - Varying rho',
+        'upper_bound_func': f_ref_4_1,
+        'lower_bound_func': f_ref_4_1
+    },
+{
+        'root_dir': base_dir + 'group=example_4_2_rho_1norm',
+        'x_param': 'rho',
+        'fixed_params': {'alpha':0.7, 'gamma': 1280, 'depth': 3, 'width': 128},
+        'epoch': 20000,
+        'num_seeds': 1,
+        'output_path': base_output_dir + 'example_4_2_rho_1norm.png',
+        'title': 'Example 4.2 - Varying rho',
+        'upper_bound_func': partial(f_ref_4_2_upper, alpha=0.7),
+        'lower_bound_func': partial(f_ref_4_2_lower, alpha=0.7),
     },
 ]
 

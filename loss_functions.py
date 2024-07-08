@@ -3,7 +3,7 @@ from functools import partial
 import torch
 
 
-def loss_function_empirical_integral(inputs, outputs, additional_parameters, rho, gamma, f, input_dim, c=partial(torch.norm, p=2, dim=1)):
+def loss_function_empirical_integral(inputs, outputs, additional_parameters, rho, gamma, f, input_dim, c=partial(torch.norm, p=1, dim=1)):
     res_lambda = additional_parameters['lambda'] * rho
     inner_sum_h = outputs['h'].sum(dim=1)
     res_h = inner_sum_h.mean()
@@ -18,7 +18,7 @@ def loss_function_empirical_integral(inputs, outputs, additional_parameters, rho
     return loss
 
 
-def loss_function_empirical_integral_avar(inputs, outputs, additional_parameters, rho, gamma, f, input_dim, c=partial(torch.norm, p=2, dim=1)):
+def loss_function_empirical_integral_avar(inputs, outputs, additional_parameters, rho, gamma, f, input_dim, c=partial(torch.norm, p=1, dim=1)):
     res_lambda = additional_parameters['lambda'] * rho
     inner_sum_h = outputs['h'].sum(dim=1)
     res_h = inner_sum_h.mean()

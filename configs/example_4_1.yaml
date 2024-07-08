@@ -60,7 +60,7 @@ train_results_save_path: './results_train.csv'
 test_results_save_path: './results_test.csv'
 overwrite_results: False
 
-experiment_group: example_4_1_${now:%Y-%m-%d-%H-%M-%S}
+experiment_group: example_4_1_1norm_test_${now:%Y-%m-%d-%H-%M-%S}
 #experiment_group: example_4_1
 experiment_name: rho=${rho}/gamma=${gamma}/batch_size=${batch_size_training}/width=${model.hidden_dim}/depth=${model.num_hidden_layers}/seed=${seed}
 top_level_working_dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}
