@@ -11,7 +11,7 @@ def f_max(x):
 def f_avar(x, tau, alpha):
     #return tau + torch.mul(torch.tensor(1 / (1 - alpha)), torch.maximum(x[:, 0] + x[:, 1] - tau, torch.tensor(0.0)))
     res = tau + torch.mul(torch.tensor(1 / (1 - alpha)), torch.maximum(torch.sum(x[:, :], dim=1) - tau, torch.tensor(0.0)))
-    print(res)
+    # print(res)
     return res
 
 

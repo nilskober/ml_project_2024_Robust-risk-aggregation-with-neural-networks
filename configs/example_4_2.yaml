@@ -37,8 +37,8 @@ lambda_par:
 
 tau_par:
   initial: 0.0
-  update_every: 1000
-  start_optimizing_at: 5000
+  update_every: 200
+  start_optimizing_at: 1000
   initial_lr: 0.1
   start_decay_at: 15000
   decay_every: 50
