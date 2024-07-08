@@ -1,0 +1,92 @@
+defaults:
+  - override hydra/launcher: joblib
+  - override hydra/job_logging: only_file
+  - override hydra/sweeper: optuna
+  - override hydra/sweeper/sampler: tpe
+  - _self_
+
+
+
+
+seed: 0
+use_gpu: False
+
+model:
+  _target_: models.ParallelRiskAggregationNN
+  hidden_dim: 128
+  num_hidden_layers: 3
+  input_dim: 2
+
+distribution:
+  _target_: distributions.TwoComonotoneStandardUniforms
+
+loss_function:
+  _target_: loss_functions.loss_function_empirical_integral
+  _partial_: True
+
+analytical_solution: 0.65
+
+target_function:
+  _target_: target_functions.f_max
+  _partial_: True
+
+lambda_par:
+  initial: 0.0
+  update_every: 200
+  start_optimizing_at: 1000
+  initial_lr: 0.1
+  start_decay_at: 15000
+  decay_every: 50
+  decay_rate: 0.98
+  lower_bound: 0.0 # use null for no lower bound
+
+tau_par: null
+
+# More parameters...
+batch_size_training: 128
+batch_size_testing: 65536
+rho: 0.3
+gamma: 1280
+f: example_4_1.f_max
+input_dim: 2
+num_epochs_total: 20001
+start_decay_at: 15000
+lr: 0.0001
+print_every: 100
+test_every: 100
+
+# Path to save model
+save_model: False
+model_save_path: './model.pth'
+overwrite_model: False
+
+# Path to save results
+save_results: True
+train_results_save_path: './results_train.csv'
+test_results_save_path: './results_test.csv'
+overwrite_results: False
+
+experiment_group: example_4_1_${now:%Y-%m-%d-%H-%M-%S}
+#experiment_group: example_4_1
+experiment_name: rho=${rho}/gamma=${gamma}/batch_size=${batch_size_training}/width=${model.hidden_dim}/depth=${model.num_hidden_layers}/seed=${seed}
+top_level_working_dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}
+hydra:
+  run:
+    dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}/${experiment_name}
+  sweep:
+    dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}
+    subdir: ${experiment_name}
+  job:
+    chdir: true
+  sweeper:
+    sampler:
+      seed: 0
+    direction: minimize
+    study_name: hpo_example_4_1
+    storage: null
+    n_trials: 100
+    n_jobs: 9
+    params:
+      lambda_par.initial_lr: tag(log, interval(0.0000001, 1))
+      lambda_par.update_every: range(1, 1000)
+

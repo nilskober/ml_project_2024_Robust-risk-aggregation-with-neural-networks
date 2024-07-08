@@ -154,6 +154,10 @@ def main(cfg: DictConfig) -> None:
     # print(f'Loss on test data: {loss.item():.4f}')
 
     logger_hydra.info(f"Completed task {task_id + 1}")
+    # return difference to analytical solution if available
+    if hasattr(cfg, 'analytical_solution'):
+        loss = res['loss_trajectory_test'][-1][1]
+        return abs(loss - cfg.analytical_solution)
 
 if __name__ == "__main__":
     dirname = os.path.dirname(__file__)
