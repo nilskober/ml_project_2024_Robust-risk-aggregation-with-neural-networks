@@ -13,10 +13,23 @@ python run_optimization.py --config-name example_4_1 --multirun rho=0.5 model.hi
 
 
 
-python run_optimization.py --config-name example_4_1 --multirun rho=0.5 gamma=2000,3000,4000,5000,10000,20000,30000,40000,50000 seed=0,1,2,3,4,5,6,7,8,9,10;python run_optimization.py --config-name example_4_2 --multirun rho=0.05,0.10,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95,1.00 seed=0,1,2,3,4,5,6,7,8,9,10;python run_optimization.py --config-name Example_Multiple_Standard_Normal --multirun rho=0.05,0.10,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95,1.00 seed=0,1,2,3,4,5,6,7,8,9,10
+python run_optimization.py --config-name example_4_1 --multirun rho=0.5 gamma=2000,3000,4000,5000,10000,20000,30000,40000,50000 seed=0,1,2,3,4,5,6,7,8,9,10;python run_optimization.py --config-name example_4_2 --multirun rho=0.05,0.10,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95,1.00 seed=0,1,2,3,4,5,6,7,8,9,10;
+python run_optimization.py --config-name Example_Multiple_Standard_Normal --multirun rho=0.05,0.10,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95,1.00 seed=0,1,2,3,4,5,6,7,8,9,10
 
 
 python run_optimization.py --config-name example_4_1 --multirun rho=0.5 num_epochs_total=20001 batch_size_training=128,256,512,1024 seed=0,1,2,3,4,5,6,7,8,9,10
 
 
 python run_optimization.py --config-name example_4_2 --multirun rho=0.05,0.10,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95,1.00 seed=0,1,2,3,4,5,6,7,8,9,10
+
+
+New 08.07.2024:
+sleep 3600; python run_optimization.py --config-name example_4_1 --multirun rho=0.05,0.10,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95,1.00 seed=0,1,2,3,4,5,6,7,8,9,10; python run_optimization.py --config-name example_4_1 --multirun rho=0.5 seed=0,1,2,3,4,5,6,7,8,9,10 num_epochs_total=100001; python run_optimization.py --config-name example_4_1 --multirun rho=0.5 model.hidden_dim=64,128,256,512,1024 seed=0,1,2,3,4,5,6,7,8,9,10; python run_optimization.py --config-name example_4_1 --multirun rho=0.5 model.num_hidden_layers=1,3,5,7,11 seed=0,1,2,3,4,5,6,7,8,9,10; python run_optimization.py --config-name example_4_1 --multirun rho=0.5 gamma=1,50,100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,3000,4000,5000,10000,20000,30000,40000,50000 seed=0,1,2,3,4,5,6,7,8,9,10
+
+
+
+
+python run_optimization.py --config-name Example_Multiple_Standard_Normal --multirun rho=10.0 seed=0 tau_par.start_decay_at=15000 tau_par.update_every=200 num_epochs_total=40000 tau_par.initial=5.61 distribution._target_=distributions.MultivariateDependentNormal
+
+
+python run_optimization.py --config-name example_4_1 --multirun rho=0.5 num_epochs_total=20001 batch_size_training=64,128,256,512,1024 seed=0,1,2,3,4,5,6,7,8,9,10

@@ -43,7 +43,7 @@ rho: 0.5
 gamma: 1280
 f: example_4_1.f_max
 input_dim: 2
-num_epochs_total: 100001
+num_epochs_total: 20001
 start_decay_at: 15000
 lr: 0.0001
 print_every: 100
@@ -60,7 +60,7 @@ train_results_save_path: './results_train.csv'
 test_results_save_path: './results_test.csv'
 overwrite_results: False
 
-experiment_group: example_4_1_1norm_test_${now:%Y-%m-%d-%H-%M-%S}
+experiment_group: example_4_1_${now:%Y-%m-%d-%H-%M-%S}
 #experiment_group: example_4_1
 experiment_name: rho=${rho}/gamma=${gamma}/batch_size=${batch_size_training}/width=${model.hidden_dim}/depth=${model.num_hidden_layers}/seed=${seed}
 top_level_working_dir: ${oc.env:HYDRA_ROOT}/experiments/results/group=${experiment_group}
