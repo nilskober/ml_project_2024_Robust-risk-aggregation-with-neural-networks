@@ -22,7 +22,7 @@ You can also modify parameters directly in the command line by adding them to th
 
 ```python run_optimization.py --config-name example_4_1 num_epochs_total=100000```
 
-To run larger scale experiments, you can also use the --multirun option to run multiple experiments in parallel. For example, to run Example 4.1. with different seeds and different values for rho, execute the following command:
+You can also use the --multirun option to run multiple experiments in parallel. For example, to run Example 4.1. with different seeds and different values for rho, execute the following command:
 
 ```python run_optimization.py --config-name example_4_1 --multirun seed=1,2,3,4,5 rho=0.1,0.2,0.3,0.4,0.5```
 
