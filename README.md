@@ -5,7 +5,7 @@ This repository contains the code for our study project in the context of the le
 It implements the optimization problem described in the paper "Robust risk aggregation with neural networks" by Eckstein et al. (2020) using neural networks.
 
 ## Running the code
-This project requires Python 3.12 or higher. It has only been tested on MacOS and Linux with Python 3.12.4. We recommend install Python via Anaconda or Miniconda.
+This project requires Python 3.12 or higher. It has only been tested on MacOS and Linux with Python 3.12.4. We recommend installing Python via Anaconda or Miniconda.
 After having installed a suitable Python version, make sure to install the required packages by running the following command:
 ```pip install -r requirements.txt```
 
