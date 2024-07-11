@@ -1,7 +1,7 @@
 # Machine Learning Study Project
 ### Based on "Robust risk aggregation with neural networks" (Eckstein et al., 2020)
 
-This repository contains the code for our study project in the context of the lecture "Stochastics of Machine Learning" at the University Freiburg by Prof. Dr. Thorsten Schmidt.
+This repository contains the code for our study project in the context of the lecture "Stochastics of Machine Learning" in the summer term 2024 at the University Freiburg by Prof. Dr. Thorsten Schmidt.
 It implements the optimization problem described in the paper "Robust risk aggregation with neural networks" by Eckstein et al. (2020) using neural networks.
 
 ## Running the code
