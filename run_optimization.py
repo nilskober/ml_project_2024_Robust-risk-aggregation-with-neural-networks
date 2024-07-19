@@ -2,6 +2,7 @@ import logging
 from os.path import join
 
 import hydra
+import omegaconf
 import torch
 from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig, OmegaConf
@@ -17,7 +18,11 @@ logger_hydra = logging.getLogger("hydra_multirun")
 
 @hydra.main(config_path="configs", version_base="1.2")
 def main(cfg: DictConfig) -> None:
-    task_id = HydraConfig.get().job.num
+    task_id = 0
+    try:
+        task_id = HydraConfig.get().job.num
+    except omegaconf.errors.MissingMandatoryValue:
+        pass
     logger_hydra.info(f"Starting task {task_id + 1}")
 
     # print the config
